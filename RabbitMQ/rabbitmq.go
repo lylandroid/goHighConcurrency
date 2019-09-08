@@ -159,7 +159,7 @@ func (r *RabbitMQ) applyExchange() {
 func (r *RabbitMQ) bindingQueueExchange() {
 	err := r.channel.QueueBind(
 		r.QueueName,    // queue name
-		"",             // routing key,订阅模式下key必须为空
+		r.Key,          // routing key,订阅模式下key必须为空
 		r.ExchangeName, // exchange
 		false,
 		nil,
@@ -182,5 +182,4 @@ func (r *RabbitMQ) ReceiverSub() {
 	r.bindingQueueExchange()
 	//消费消息
 	r.Consume()
-
 }

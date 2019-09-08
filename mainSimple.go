@@ -5,8 +5,8 @@ import (
 )
 
 func main() {
-	publishMsg()
-	//receiveMsg()
+	//publishMsg()
+	receiveMsg()
 }
 
 const QueueName = "imoocSimple"
