@@ -15,3 +15,7 @@
     1，消息被路由投递个多个队列，一个消息被多个消费者获取
     2，具体代码实现：启动2个接受这，一个发送者测试
   ![Image text](images/004-rabitmq-subscribe-mode.png)
+## 4，Routing，路由模式
+    1，一个消息被多个消费者获取。并且消息的目标队列可被生产者指定
+    2，启动多个消费者，一个生产者测试（查看数据是否成功）
+   ![Image text](images/005-routing-mode.png)

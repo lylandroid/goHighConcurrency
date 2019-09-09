@@ -29,13 +29,17 @@ func NewRabbitMQ(queueName string, exchange string, key string) *RabbitMQ {
 		Key:          key,
 		MqUrl:        MQURL,
 	}
-	var err error
-	rabbitmq.conn, err = amqp.Dial(rabbitmq.MqUrl)
-	rabbitmq.failOnErr(err, "Failed to connect to RabbitMQ")
-
-	rabbitmq.channel, err = rabbitmq.conn.Channel()
-	rabbitmq.failOnErr(err, "Failed to open a channel")
+	rabbitmq.dial()
 	return rabbitmq
+}
+
+func (r *RabbitMQ) dial() {
+	var err error
+	r.conn, err = amqp.Dial(r.MqUrl)
+	r.failOnErr(err, "Failed to connect to RabbitMQ")
+
+	r.channel, err = r.conn.Channel()
+	r.failOnErr(err, "Failed to open a channel")
 }
 
 //端口channel和connection
@@ -82,7 +86,7 @@ func (r *RabbitMQ) applyQueue() {
 func (r *RabbitMQ) publish(message string) {
 	err := r.channel.Publish(
 		r.ExchangeName, // 交换机
-		"",
+		r.Key,
 		// 如果为true,根据Exchange类型和routKey规则，
 		// 如果无法找到符合条件的队列那么会把发送的消息返回给发送者
 		false,
@@ -139,11 +143,11 @@ func NewRabbitMQPubSub(exchangeName string) *RabbitMQ {
 	return rabbitmq
 }
 
-//试探性创建交换机
-func (r *RabbitMQ) applyExchange() {
+//试探性创建交换机(广播类型:"fanout",路由模式："direct")
+func (r *RabbitMQ) applyExchange(kind string) {
 	err := r.channel.ExchangeDeclare(
 		r.ExchangeName, // name
-		"fanout",       // type 交换机类型（fanout：广播类型）
+		kind,           // type 交换机类型（fanout：广播类型）
 		true,           // durable 是否持久化
 		false,          // auto-deleted 是否自动删除
 		//true表示这个exchange不可以被client用来推送消息，
@@ -170,16 +174,33 @@ func (r *RabbitMQ) bindingQueueExchange() {
 //订阅模式生产
 func (r *RabbitMQ) PublishPub(message string) {
 	//1,试探性创建交换机
-	r.applyExchange()
+	r.applyExchange("fanout")
 	r.publish(message)
 }
 
 func (r *RabbitMQ) ReceiverSub() {
 	//1,试探性创建交换机
-	r.applyExchange()
+	r.applyExchange("fanout")
 	//queueName=""表示队列随机生成
 	r.applyQueueArgs(true)
 	r.bindingQueueExchange()
 	//消费消息
+	r.Consume()
+}
+
+func NewRabbitMQRouting(exchangeName string, routingKey string) *RabbitMQ {
+	rabbitMQ := NewRabbitMQ("", exchangeName, routingKey)
+	return rabbitMQ
+}
+
+func (r *RabbitMQ) PublishRouting(message string) {
+	r.applyExchange("direct")
+	r.publish(message)
+}
+
+func (r *RabbitMQ) ReceiverRouting() {
+	r.applyExchange("direct")
+	r.applyQueueArgs(true)
+	r.bindingQueueExchange()
 	r.Consume()
 }
