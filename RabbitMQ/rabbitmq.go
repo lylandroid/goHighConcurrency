@@ -58,16 +58,16 @@ func NewRabbitMQSimple(queueName string) *RabbitMQ {
 	return rabbitmq
 }
 
-func (r *RabbitMQ) applyQueueArgs(queueName string, exclusive bool) {
+func (r *RabbitMQ) applyQueueArgs(exclusive bool) {
 	//1,申请队列，如果队列不存在则创建，如果存在则调过创建
 	//保证队列存在，消息能发送到队列中
 	q, err := r.channel.QueueDeclare(
-		queueName, // name
-		false,     // 消息是否持久化
-		false,     // 最后一个监听失效是否自动删除消息
-		exclusive, // 是否具有排他性（其他用户是否可见）
-		false,     // 是否阻塞
-		nil,       // 额外属性
+		r.QueueName, // name
+		false,       // 消息是否持久化
+		false,       // 最后一个监听失效是否自动删除消息
+		exclusive,   // 是否具有排他性（其他用户是否可见）
+		false,       // 是否阻塞
+		nil,         // 额外属性
 	)
 	r.QueueName = q.Name
 	r.failOnErr(err, "Failed to declare a queue")
@@ -75,7 +75,7 @@ func (r *RabbitMQ) applyQueueArgs(queueName string, exclusive bool) {
 
 //试探性申请队列
 func (r *RabbitMQ) applyQueue() {
-	r.applyQueueArgs(r.QueueName, false)
+	r.applyQueueArgs(false)
 }
 
 //发送消息
@@ -109,7 +109,7 @@ func (r *RabbitMQ) PublishSimple(message string) {
 //消费消息
 func (r *RabbitMQ) Consume() {
 	//1,申请队列
-	r.applyQueue()
+	//r.applyQueue()
 	//2,接受消息
 	msgs, err := r.channel.Consume(
 		r.QueueName, // queue
@@ -178,7 +178,7 @@ func (r *RabbitMQ) ReceiverSub() {
 	//1,试探性创建交换机
 	r.applyExchange()
 	//queueName=""表示队列随机生成
-	r.applyQueueArgs("", true)
+	r.applyQueueArgs(true)
 	r.bindingQueueExchange()
 	//消费消息
 	r.Consume()
