@@ -13,7 +13,7 @@ const QueueName = "imoocSimple"
 
 //消费消息
 func receiveMsg() {
-	RabbitMQ.NewRabbitMQSimple(QueueName).Consume()
+	RabbitMQ.NewRabbitMQSimple(QueueName).ApplyQueue().Consume()
 }
 
 //生产消息

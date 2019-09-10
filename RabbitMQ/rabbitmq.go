@@ -78,8 +78,9 @@ func (r *RabbitMQ) applyQueueArgs(exclusive bool) {
 }
 
 //试探性申请队列
-func (r *RabbitMQ) applyQueue() {
+func (r *RabbitMQ) ApplyQueue() *RabbitMQ{
 	r.applyQueueArgs(false)
+	return r
 }
 
 //发送消息
@@ -104,7 +105,7 @@ func (r *RabbitMQ) publish(message string) {
 //1.2生产简单模式消息
 func (r *RabbitMQ) PublishSimple(message string) {
 	//1,申请队列
-	r.applyQueue()
+	r.ApplyQueue()
 	//2,发送消息到队列中
 	r.publish(message)
 
@@ -113,7 +114,7 @@ func (r *RabbitMQ) PublishSimple(message string) {
 //消费消息
 func (r *RabbitMQ) Consume() {
 	//1,申请队列
-	//r.applyQueue()
+	//r.ApplyQueue()
 	//2,接受消息
 	msgs, err := r.channel.Consume(
 		r.QueueName, // queue
