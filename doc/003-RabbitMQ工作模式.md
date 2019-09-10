@@ -21,3 +21,4 @@
    ![Image text](images/005-routing-mode.png)
 ## 5，Topic，话题模式
     1，一个消息被多个消费者获取，消息的目标queue可用BindignKey以通配符，（#：一个或多个词，*：一个词）的方式指定
+    

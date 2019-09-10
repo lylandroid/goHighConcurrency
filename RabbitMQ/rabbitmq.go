@@ -204,3 +204,25 @@ func (r *RabbitMQ) ReceiverRouting() {
 	r.bindingQueueExchange()
 	r.Consume()
 }
+
+func NewRabbitMQTopic(exchangeName string, routingKey string) *RabbitMQ {
+	rabbitmq := NewRabbitMQ("", exchangeName, routingKey)
+	return rabbitmq
+}
+
+//话题模式发送消息
+func (r *RabbitMQ) PublishTopic(message string) {
+	r.applyExchange("topic")
+	r.publish(message)
+}
+
+//话题模式接收消息
+//要注意key规则
+//其中“*”表示匹配imooc.hello,
+// 但是imooc.hello.one需要用imooc.#才能匹配
+func (r *RabbitMQ) ReceiverTopic() {
+	r.applyExchange("topic")
+	r.applyQueueArgs(true)
+	r.bindingQueueExchange()
+	r.Consume()
+}
