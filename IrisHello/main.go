@@ -9,7 +9,7 @@ import (
 func main() {
 	app := iris.New()
 	app.Logger().SetLevel("debug")
-	app.RegisterView(iris.HTML("./Iris/web/views", ".html"))
+	app.RegisterView(iris.HTML("./IrisHello/web/views", ".html"))
 	mvc.New(app.Party("/movie")).Handle(new(controllers.MovieController))
 	app.Run(iris.Addr(":8080") /*, iris.WithoutServerError(iris.ErrServerClosed)*/)
 }

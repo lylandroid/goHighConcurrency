@@ -6,8 +6,8 @@
     1. MVC是什么？
     2. Iris MVC目录介绍
         2.1. datamodels: 数据模型
-        2.2. repositories:数据库操作
-        2.3. services: models业务逻辑
+        2.2. repositories:数据库操作结构图目录
+        2.3. services: models业务逻辑代码存放目录
         2.4. web
                2.4.1. controllers:控制请求
                2.4.2. views:视图模板
