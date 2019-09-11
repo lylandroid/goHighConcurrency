@@ -26,12 +26,3 @@
     4，Exchanges
     5，Queues
     6，Binding(Queues->Exchanges)
-
-## RabbitMQ 6种工作模式
-1，Simple模式（最简单的模式）
-    ![Image text](images/003-rabbitmq-mode-simple.png)
-2，
-3，
-4，
-5，
-6，
