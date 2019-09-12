@@ -4,6 +4,7 @@ import (
 	"../common"
 	"../datamodels"
 	"database/sql"
+	"fmt"
 	"strconv"
 )
 
@@ -45,13 +46,13 @@ func (p *ProductManager) Insert(product *datamodels.Product) (id int64, err erro
 		return 0, err
 	}
 	//准备sql
-	sql := "INSERT ? SET productName=?,productNum=?,productImage=?,productUrl=?"
+	sql := fmt.Sprintf("INSERT %s SET productName=?,productNum=?,productImage=?,productUrl=?", p.Table)
 	if stmt, err := p.MySqlConn.Prepare(sql); err != nil {
 		return 0, err
-	} else if result, err := stmt.Exec(p.Table, product.ProductName, product.ProductNum, product.ProductImage, product.ProductUrl); err != nil {
+	} else if result, err := stmt.Exec(product.ProductName, product.ProductNum, product.ProductImage, product.ProductUrl); err != nil {
 		return 0, err
 	} else {
-		defer stmt.Close()
+		//defer stmt.Close()
 		return result.LastInsertId()
 	}
 
@@ -62,12 +63,12 @@ func (p *ProductManager) Delete(productId int64) bool {
 	if err := p.Conn(); err != nil {
 		return false
 	}
-	sql := "DELETE FROM ? where ID=?"
+	sql := fmt.Sprintf("DELETE FROM %s where ID=?", p.Table)
 	stmt, err := p.MySqlConn.Prepare(sql)
 	if err != nil {
 		return false
 	}
-	if _, err := stmt.Exec(p.Table, productId); err != nil {
+	if _, err := stmt.Exec(productId); err != nil {
 		return false
 	}
 	return true
@@ -78,14 +79,14 @@ func (p *ProductManager) Update(product *datamodels.Product) (err error) {
 	if err := p.Conn(); err != nil {
 		return err
 	}
-	sql := "UPDATE ? SET productName=?,productNum=?,productImage=?,productUrl=? WHERE ID=?"
+	sql := fmt.Sprintf("UPDATE %s SET productName=?,productNum=?,productImage=?,productUrl=? WHERE ID=?", p.Table)
 	if stmt, err := p.MySqlConn.Prepare(sql); err != nil {
 		return err
-	} else if _, err := stmt.Exec(p.Table, product.ProductName, product.ProductNum, product.ProductImage,
+	} else if _, err := stmt.Exec(product.ProductName, product.ProductNum, product.ProductImage,
 		product.ProductUrl, strconv.FormatInt(product.ID, 10)); err != nil {
 		return err
 	} else {
-		defer stmt.Close()
+		//defer stmt.Close()
 		return nil
 	}
 
@@ -96,14 +97,14 @@ func (p *ProductManager) SelectByKey(productId int64) (productResult *datamodels
 	if err := p.Conn(); err != nil {
 		return nil, err
 	}
-	sql := "SELECT ID,productName,productNum,productImage.productUrl FROM ? WHERE ID=?"
+	sql := fmt.Sprintf("SELECT ID,productName,productNum,productImage,productUrl FROM %s WHERE ID=?", p.Table)
 	stmt, err := p.MySqlConn.Prepare(sql)
 	if err != nil {
 		return nil, err
 	}
 	/*row := stmt.QueryRow(p.Table, strconv.FormatInt(productId, 10))
 	return readRow(row)*/
-	rows, err := stmt.Query(p.Table, strconv.FormatInt(productId, 10))
+	rows, err := stmt.Query(strconv.FormatInt(productId, 10))
 	rowMap := common.GetResultRow(rows)
 	common.DataToStructByTagSql(rowMap, &productResult)
 	return
@@ -114,12 +115,12 @@ func (p *ProductManager) SelectAll() (products []*datamodels.Product, err error)
 	if err := p.Conn(); err != nil {
 		return nil, err
 	}
-	sql := "SELECT ID,productName,productNum,productImage.productUrl FROM ?"
+	sql := fmt.Sprintf("SELECT ID,productName,productNum,productImage,productUrl FROM %s", p.Table)
 	stmt, err := p.MySqlConn.Prepare(sql)
 	if err != nil {
 		return nil, err
 	}
-	rows, err := stmt.Query(p.Table)
+	rows, err := stmt.Query()
 	if err != nil {
 		return nil, err
 	}
