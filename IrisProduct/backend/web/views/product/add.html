@@ -1,0 +1,53 @@
+<div class="page-head">
+    <h2 class="page-head-title">商品管理</h2>
+
+</div>
+
+<div class="main-content container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default panel-border-color panel-border-color-primary">
+                <div class="panel-heading panel-heading-divider">添加商品<span class="panel-subtitle"></span></div>
+                <div class="panel-body">
+                    <form action="/product/add" style="border-radius: 0px;" class="form-horizontal group-border-dashed" method="post" >
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品名称</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="ProductName"  >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品数量</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="ProductNum"  >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品图片地址</label>
+                            <div class="col-sm-6">
+                                <input type="text"   class="form-control" name="ProductImage"  >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品访问链接</label>
+                            <div class="col-sm-6">
+                                <input type="text"   class="form-control" name="ProductUrl"  >
+                            </div>
+                        </div>
+                        <div class="row xs-pt-15">
+                            <div class="col-xs-6">
+                                <p class="text-right">
+                                    <button type="submit" class="btn btn-space btn-primary">添加</button>
+                                    <button class="btn btn-space btn-default" type="reset">重置</button>
+                                </p>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

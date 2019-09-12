@@ -1,6 +1,13 @@
 package main
 
-import "github.com/kataras/iris"
+import (
+	"context"
+	"github.com/kataras/iris"
+	"../common"
+	"../services"
+	"github.com/kataras/iris/mvc"
+	"./web/contorllers"
+)
 
 const rootWebPath = "./IrisProduct/backend/web/"
 
@@ -19,8 +26,21 @@ func main() {
 		ctx.ViewLayout("")
 		ctx.View("shared/error.html")
 	})
+	//连接数据库成功
+	db, err := common.NewMysqlConn()
+	if err != nil {
+		panic(err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	productServiceImp := services.NewProductServiceImp("product", db)
+	productParty := app.Party("/product")
+	product := mvc.New(productParty)
+	product.Register(ctx, productServiceImp)
+	product.Handle(new(contorllers.ProductController))
+
 	//注册控制权
-	//TODO
+
 	//启动服务
 	app.Run(iris.Addr(":8080"),
 		iris.WithoutVersionChecker,

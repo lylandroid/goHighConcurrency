@@ -1,0 +1,43 @@
+<div class="page-head">
+    <h2 class="page-head-title">商品管理</h2>
+</div>
+
+<div class="main-content container-fluid">
+    <div class="row">
+        <!--Responsive table-->
+        <div class="col-sm-12">
+            <div class="panel panel-default panel-table">
+                <div class="panel-heading">商品列表
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive noSwipe">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th style="width:10%;">商品ID</th>
+                                <th style="width:17%;">商品图片</th>
+                                <th style="width:25%;">商品名称</th>
+                                <th style="width:25%;">商品链接</th>
+                                <th style="width:30%;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{range $i, $v := .productArray}}
+                            <tr>
+                                <td class="user-avatar cell-detail user-info">{{$v.ID}}</td>
+                                <td class="cell-detail"><img src="{{$v.ProductImage}}" alt="Avatar"> </td>
+                                <td class="milestone"> {{$v.ProductName}}
+                                </td>
+                                <td class="cell-detail">{{$v.ProductUrl}}</td>
+                                <td class="cell-detail"><a href="/product/manager?id={{$v.ID}}"><button class="btn btn-space btn-primary">修改</button></a> <a href="/product/delete?id={{$v.ID}}"><button class="btn btn-space btn-danger">删除</button></a>   </td>
+                            </tr>
+                            {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
