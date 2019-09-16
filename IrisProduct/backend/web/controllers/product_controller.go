@@ -1,4 +1,4 @@
-package contorllers
+package controllers
 
 import (
 	"../../../services"

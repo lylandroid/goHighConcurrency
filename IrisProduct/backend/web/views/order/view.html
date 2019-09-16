@@ -1,0 +1,40 @@
+<div class="page-head">
+    <h2 class="page-head-title">订单管理</h2>
+</div>
+<div class="main-content container-fluid">
+    <div class="row">
+        <!--Responsive table-->
+        <div class="col-sm-12">
+            <div class="panel panel-default panel-table">
+                <div class="panel-heading">订单列表
+
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive noSwipe">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th style="width:20%;">订单ID</th>
+                                <th style="width:17%;">用户名称</th>
+                                <th style="width:15%;">商品名称</th>
+                                <th style="width:10%;">发货状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{range $i, $v := .order}}
+                            <tr>
+                                <td class="user-avatar cell-detail user-info">{{$v.ID}}</td>
+                                <td class="cell-detail"></td>
+                                <td class="milestone"> {{$v.productName}}
+                                </td>
+                                <td class="cell-detail">{{ if eq $v.orderStatus "1"}} 已发货 {{else}} 未发货 {{end}}</td>
+                            </tr>
+                            {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

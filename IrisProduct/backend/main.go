@@ -6,7 +6,7 @@ import (
 	"../common"
 	"../services"
 	"github.com/kataras/iris/mvc"
-	"./web/contorllers"
+	"./web/controllers"
 )
 
 const rootWebPath = "./IrisProduct/backend/web/"
@@ -33,13 +33,19 @@ func main() {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	//注册控制权
 	productServiceImp := services.NewProductServiceImp("product", db)
 	productParty := app.Party("/product")
 	product := mvc.New(productParty)
 	product.Register(ctx, productServiceImp)
-	product.Handle(new(contorllers.ProductController))
+	product.Handle(new(controllers.ProductController))
 
-	//注册控制权
+	orderService := services.NewOrderService("order", db)
+	orderParty := app.Party("/order")
+	order := mvc.New(orderParty)
+	order.Register(ctx, orderService)
+	order.Handle(new(controllers.OrderController))
 
 	//启动服务
 	app.Run(iris.Addr(":8080"),

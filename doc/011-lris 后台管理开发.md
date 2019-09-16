@@ -37,7 +37,7 @@
           <input type="submit">;
         </form>;
     </code>
-## 三，创建数据库
+## 三，创建数据库 & product表
     SET NAMES utf8mb4;
     SET FOREIGN_KEY_CHECKS = 0;
     
@@ -55,3 +55,24 @@
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
     SET FOREIGN_KEY_CHECKS = 1;
+## 四，完成订单相关代码，创建订单表
+    SET NAMES utf8mb4;
+    SET FOREIGN_KEY_CHECKS = 0;
+    
+    -- ----------------------------
+    -- Table structure for order
+    -- ----------------------------
+    DROP TABLE IF EXISTS `order`;
+    CREATE TABLE `order`  (
+      `ID` int(11) NOT NULL AUTO_INCREMENT,
+      `userID` int(11) DEFAULT NULL,
+      `productID` int(11) DEFAULT NULL,
+      `orderStatus` int(11) DEFAULT NULL,
+      PRIMARY KEY (`ID`) USING BTREE
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+    
+    SET FOREIGN_KEY_CHECKS = 1;
+    
+    
+    
+    
