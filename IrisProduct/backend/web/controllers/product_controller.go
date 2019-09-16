@@ -25,7 +25,7 @@ func (p *ProductController) GetAll() mvc.View {
 		Name: "product/view.html",
 		Data: iris.Map{
 			//"errMsg":     errMsg,
-			"productMap": products,
+			"productArray": products,
 		},
 	}
 }
@@ -41,7 +41,7 @@ func (p *ProductController) Get() mvc.View {
 		Name: "product/product.html",
 		Data: iris.Map{
 			//"errMsg":     errMsg,
-			"productMap": products,
+			"productArray": products,
 		},
 	}
 }

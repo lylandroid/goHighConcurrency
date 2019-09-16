@@ -11,7 +11,7 @@ type OrderController struct {
 	OrderService services.IOrderService
 }
 
-func (o *OrderController) GetAllInfo() mvc.View {
+func (o *OrderController) Get() mvc.View {
 	orderMap, err := o.OrderService.GetAllOrderInfo()
 	if err != nil {
 		o.Ctx.Application().Logger().Debug(err)

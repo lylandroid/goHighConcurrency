@@ -126,8 +126,8 @@ func (p *ProductManager) SelectAll() (products []*datamodels.Product, err error)
 	}
 	rowsMap := common.GetResultRows(rows)
 	for _, v := range rowsMap {
-		var product *datamodels.Product
-		common.DataToStructByTagSql(v, &product)
+		product := &datamodels.Product{}
+		common.DataToStructByTagSql(v, product)
 		products = append(products, product)
 	}
 	return products, nil
