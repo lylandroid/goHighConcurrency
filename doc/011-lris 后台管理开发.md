@@ -74,5 +74,8 @@
     SET FOREIGN_KEY_CHECKS = 1;
     
     
+#### 4.2, 学习gorm
+    
+    
     
     

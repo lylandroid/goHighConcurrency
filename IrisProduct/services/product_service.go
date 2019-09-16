@@ -14,9 +14,9 @@ type IProductService interface {
 	DeleteProduct(productId int64) bool
 }
 
-func NewProductServiceImp(tableName string, db *sql.DB) IProductService {
+func NewProductServiceImp(db *sql.DB) IProductService {
 	return &ProductServiceImp{
-		IProductRepository: repositories.NewProductRepositoryImp(tableName, db),
+		IProductRepository: repositories.NewProductRepositoryImp("product", db),
 	}
 }
 

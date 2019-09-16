@@ -35,7 +35,7 @@ func main() {
 	defer cancel()
 
 	//注册控制权
-	productServiceImp := services.NewProductServiceImp("product", db)
+	productServiceImp := services.NewProductServiceImp( db)
 	productParty := app.Party("/product")
 	product := mvc.New(productParty)
 	product.Register(ctx, productServiceImp)
@@ -53,4 +53,12 @@ func main() {
 		iris.WithoutServerError(iris.ErrServerClosed),
 		iris.WithOptimizations, )
 
+}
+
+func register(relPath string,serviceImp interface{},controller interface{})  {
+	service := services.NewOrderService("order", db)
+	orderParty := app.Party("/order")
+	order := mvc.New(orderParty)
+	order.Register(ctx, orderService)
+	order.Handle(new(controllers.OrderController))
 }
