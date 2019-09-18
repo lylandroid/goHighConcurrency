@@ -5,6 +5,7 @@ import (
 	"../common"
 	"database/sql"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"strconv"
 )
 
@@ -29,6 +30,21 @@ func NewOrderManagerRepository(table string, sql *sql.DB) IOrderRepository {
 type OrderManagerRepository struct {
 	table     string
 	mySqlConn *sql.DB
+	gromDb    *gorm.DB
+}
+
+func (r *OrderManagerRepository) ConnGorm() (err error) {
+	if r.gromDb == nil {
+		conn, err := common.NewMySqlGormConn()
+		if err != nil {
+			return err
+		}
+		r.gromDb = conn
+		if r.table == "" {
+			r.table = "order"
+		}
+	}
+	return nil
 }
 
 func (r *OrderManagerRepository) Conn() error {
@@ -99,6 +115,15 @@ func (r *OrderManagerRepository) SelectByKey(id int64) (order *datamodels.Order,
 }
 
 func (r *OrderManagerRepository) SelectAll() (orders []*datamodels.Order, err error) {
+	if err := r.ConnGorm(); err != nil {
+		return nil, err
+	}
+	orders = []*datamodels.Order{}
+	r.gromDb.Find(&orders)
+	return
+}
+
+/*func (r *OrderManagerRepository) SelectAll() (orders []*datamodels.Order, err error) {
 	if err := r.Conn(); err != nil {
 		return nil, err
 	}
@@ -117,7 +142,7 @@ func (r *OrderManagerRepository) SelectAll() (orders []*datamodels.Order, err er
 		orders = append(orders, order)
 	}
 	return orders, nil
-}
+}*/
 
 func (r *OrderManagerRepository) SelectAllWithInfo() (orderMap map[int]map[string]string, err error) {
 	if err := r.Conn(); err != nil {
@@ -130,3 +155,19 @@ func (r *OrderManagerRepository) SelectAllWithInfo() (orderMap map[int]map[strin
 	}
 	return common.GetResultRows(rows), nil
 }
+/*func (r *OrderManagerRepository) SelectAllWithInfo() (orderMap map[int]map[string]string, err error) {
+	if err := r.ConnGorm(); err != nil {
+		return nil, err
+	}
+	//sql := `SELECT o.ID,p.productName,o.orderStatus FROM imooc.order as o left join product as p on o.productID=p.ID`
+	//rows, err := r.mySqlConn.Query(sql)
+	orderMap = map[int]map[string]string{}
+	orders := []datamodels.Order{}
+	/*find := r.gromDb.Table("order").
+		Select("order.ID,product.productName,order.orderStatus").
+		Joins("left join product on order.productID = product.ID").Find(&orders)
+		r.gromDb.Find(&orders)
+	find := r.gromDb.Table("order").Find(&orders)
+	fmt.Println("orders: ", orders, find.Error)
+	return orderMap, nil
+}*/

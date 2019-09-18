@@ -1,0 +1,43 @@
+::-moz-selection { background: #ec2424; }
+::-webkit-selection { background: #ec2424; }
+::selection { background: #ec2424; }
+
+a,
+.loader,
+.socials a:hover,
+.hero__link:hover,
+.feature__promo,
+.entry__title:hover a,
+.entry__meta a:hover,
+.entry__read-more-link:hover,
+.entry__tags a:hover,
+.comment-edit-link,
+.comment-reply:hover,
+.widget li a:hover,
+.widget_recent_entries li a:hover,
+.contact-info a:hover,
+.product__actions a:hover,
+.sign-in-popup__forgot-password:hover,
+.shop_table .product-name a:hover {
+	color: #ec2424;
+}
+
+.btn:hover,
+.btn-color,
+.btn-button:hover,
+.btn-button:focus,
+.ui-slider .ui-slider-range,
+.widget_tags a:hover,
+.pagination__page:not(span):hover,
+.remove:hover,
+#back-to-top:hover,
+.nav-cart__remove:hover {
+	background-color: #ec2424;
+}
+
+
+input:focus,
+textarea:focus,
+.hero__link:hover {
+	border-color: #ec2424;
+}

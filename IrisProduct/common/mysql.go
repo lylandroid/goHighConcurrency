@@ -3,6 +3,7 @@ package common
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
 //创建mysql 连接
@@ -10,6 +11,12 @@ func NewMysqlConn() (db *sql.DB, err error) {
 	db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/imooc?charset=utf8")
 	return
 }
+
+func NewMySqlGormConn()(db *gorm.DB,err error)  {
+	return gorm.Open("mysql","root:root@tcp(127.0.0.1:3306)/imooc?charset=utf8&parseTime=True&loc=Local")
+}
+
+
 
 //获取返回值， 获取一条
 func GetResultRow(rows *sql.Rows) map[string]string{

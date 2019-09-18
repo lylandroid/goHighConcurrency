@@ -75,6 +75,8 @@
     
     
 #### 4.2, 学习gorm
+    go get -u -v github.com/jinzhu/gorm
+    
     
     
     

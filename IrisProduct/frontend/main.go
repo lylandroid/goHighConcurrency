@@ -1,15 +1,16 @@
 package main
 
 import (
+	"../services"
+	"./web/controller"
 	"context"
 	"github.com/kataras/iris"
-	"../common"
-	"../services"
 	"github.com/kataras/iris/mvc"
-	"./web/controllers"
+	"github.com/kataras/iris/sessions"
+	"time"
 )
 
-const rootWebPath = "./IrisProduct/backend/web/"
+const rootWebPath = "./IrisProduct/frontend/web/"
 
 func main() {
 	app := iris.New()
@@ -18,7 +19,7 @@ func main() {
 		Layout("shared/layout.html").Reload(true)
 	app.RegisterView(template)
 	//设置模板目录
-	app.StaticWeb("/assets", rootWebPath+"assets")
+	app.StaticWeb("/public", rootWebPath+"public")
 	//出现异常跳转到指定页面
 	app.OnAnyErrorCode(func(ctx iris.Context) {
 		ctx.ViewData("message",
@@ -26,32 +27,25 @@ func main() {
 		ctx.ViewLayout("")
 		ctx.View("shared/error.html")
 	})
-	//连接数据库成功
-	db, err := common.NewMysqlConn()
-	if err != nil {
-		panic(err)
-	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	//注册控制权
-	productServiceImp := services.NewProductServiceImp( db)
-	productParty := app.Party("/product")
-	product := mvc.New(productParty)
-	product.Register(ctx, productServiceImp)
-	product.Handle(new(controllers.ProductController))
+	session := sessions.New(sessions.Config{
+		Cookie:  "helloword",
+		Expires: 60 * time.Minute,
+	})
 
-	orderService := services.NewOrderService("order", db)
-	orderParty := app.Party("/order")
-	order := mvc.New(orderParty)
-	order.Register(ctx, orderService)
-	order.Handle(new(controllers.OrderController))
+	//注册控制权
+	userService := services.NewUserService("user")
+	userParty := app.Party("/user")
+	user := mvc.New(userParty)
+	user.Register(userService, ctx, session.Start)
+	user.Handle(new(controller.UserController))
 
 	//启动服务
-	app.Run(iris.Addr(":8080"),
+	app.Run(iris.Addr(":8082"),
 		iris.WithoutVersionChecker,
 		iris.WithoutServerError(iris.ErrServerClosed),
 		iris.WithOptimizations, )
 
 }
-
