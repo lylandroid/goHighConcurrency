@@ -49,9 +49,9 @@ func (r *UserManagerRepository) Insert(user *datamodels.User) (id int64, err err
 		return 0, err
 	}
 	if !r.mySqlConn.NewRecord(user) {
-		return 0, errors.New("用户名已存在！")
+		return 0, errors.New("主键不为空！")
 	}
-	db := r.mySqlConn.Create(&user)
+	db := r.mySqlConn.Table("user").Create(user)
 	if db.Error != nil {
 		return 0, err
 	}
