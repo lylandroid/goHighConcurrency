@@ -18,13 +18,6 @@ type UserController struct {
 }
 
 func (c *UserController) GetRegister() mvc.View {
-	/*user := &datamodels.User{}
-	c.Ctx.Request().ParseForm()
-	dec := common.NewDecoder(&common.DecoderOptions{TagName: "imooc"})
-	if err := dec.Decode(c.Ctx.Request().Form, user); err != nil {
-		c.Ctx.Application().Logger().Debug(err)
-	}
-	c.UserService.AddUser(user)*/
 	return mvc.View{
 		Name: "user/register.html",
 	}

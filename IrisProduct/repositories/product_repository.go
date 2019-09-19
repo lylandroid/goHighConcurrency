@@ -102,11 +102,12 @@ func (p *ProductManager) SelectByKey(productId int64) (productResult *datamodels
 	if err != nil {
 		return nil, err
 	}
+	productResult = &datamodels.Product{}
 	/*row := stmt.QueryRow(p.Table, strconv.FormatInt(productId, 10))
 	return readRow(row)*/
 	rows, err := stmt.Query(strconv.FormatInt(productId, 10))
 	rowMap := common.GetResultRow(rows)
-	common.DataToStructByTagSql(rowMap, &productResult)
+	common.DataToStructByTagSql(rowMap, productResult)
 	return
 }
 
