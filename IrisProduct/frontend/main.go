@@ -2,6 +2,7 @@ package main
 
 import (
 	"../services"
+	"../common"
 	"./web/controller"
 	"context"
 	"github.com/kataras/iris"
@@ -41,6 +42,16 @@ func main() {
 	user := mvc.New(userParty)
 	user.Register(userService, ctx, session.Start)
 	user.Handle(new(controller.UserController))
+
+	db, err := common.NewMysqlConn()
+	if err != nil {
+		panic(err)
+	}
+	productService := services.NewProductServiceImp(db)
+	productParty := app.Party("/product")
+	product := mvc.New(productParty)
+	product.Register(productService, ctx, session.Start)
+	product.Handle(new(controller.ProductController))
 
 	//启动服务
 	app.Run(iris.Addr(":8082"),

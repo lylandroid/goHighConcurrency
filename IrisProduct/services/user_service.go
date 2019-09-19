@@ -3,6 +3,7 @@ package services
 import (
 	"../datamodels"
 	"../repositories"
+	"fmt"
 	"github.com/kataras/iris/core/errors"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -34,14 +35,14 @@ func (s *UserManagerService) GetNameUser(userName string) (*datamodels.User, err
 }
 
 func (s *UserManagerService) AddUser(user *datamodels.User) (int64, error) {
-	if user == nil || user.UserName == "" || user.HashPassword == "" {
+	if user == nil || user.UserName == "" || user.Password == "" {
 		return 0, errors.New("用户信息不完整！")
 	}
-	enPwd, err := GeneratePwd(user.HashPassword)
+	enPwd, err := GeneratePwd(user.Password)
 	if err != nil {
 		return 0, errors.New("密码异常！")
 	}
-	user.HashPassword = string(enPwd)
+	user.Password = string(enPwd)
 	return s.UserRepository.Insert(user)
 }
 
@@ -51,12 +52,13 @@ func (s *UserManagerService) IsLoginSuccess(userName string, uiPwd string) (user
 	}
 	user, err := s.UserRepository.Select(userName)
 	if err != nil {
+		fmt.Println(err)
 		return nil, false
 	}
-	if isOk, _ := ValidatePwd(user.HashPassword, uiPwd); isOk {
-		return nil, false
+	if isOk, _ := ValidatePwd(user.Password, uiPwd); isOk {
+		return user, true
 	}
-	return user, true
+	return nil, false
 }
 
 func ValidatePwd(dbPwd string, uiPwd string) (isOk bool, err error) {

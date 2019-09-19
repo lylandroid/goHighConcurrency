@@ -1,9 +1,9 @@
 package repositories
 
 import (
+	"../common"
 	"../datamodels"
 	"github.com/jinzhu/gorm"
-	"../common"
 	"github.com/kataras/iris/core/errors"
 )
 
@@ -42,7 +42,7 @@ func (r *UserManagerRepository) Conn() error {
 }
 
 func (r *UserManagerRepository) Insert(user *datamodels.User) (id int64, err error) {
-	if user == nil || user.UserName == "" || user.HashPassword == "" {
+	if user == nil || user.UserName == "" || user.Password == "" {
 		return 0, errors.New("用户信息不完整！")
 	}
 	if err = r.Conn(); err != nil {
@@ -51,11 +51,11 @@ func (r *UserManagerRepository) Insert(user *datamodels.User) (id int64, err err
 	if !r.mySqlConn.NewRecord(user) {
 		return 0, errors.New("主键不为空！")
 	}
-	db := r.mySqlConn.Table("user").Create(user)
+	db := r.mySqlConn.Create(user)
 	if db.Error != nil {
 		return 0, err
 	}
-	return user.ID, nil
+	return int64(user.ID), nil
 }
 
 func (r *UserManagerRepository) Delete(int64) bool {
@@ -75,9 +75,9 @@ func (r *UserManagerRepository) Select(userName string) (user *datamodels.User, 
 	}
 	user = &datamodels.User{}
 	db := r.mySqlConn.Where(&datamodels.User{UserName: userName}).First(user)
-	defer db.Close()
+	//defer db.Close()
 	if db.Error != nil {
-		return user, err
+		return user, db.Error
 	}
 	return user, nil
 }
