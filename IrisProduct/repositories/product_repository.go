@@ -63,7 +63,7 @@ func (p *ProductManager) Delete(productId int64) bool {
 	if err := p.Conn(); err != nil {
 		return false
 	}
-	sql := fmt.Sprintf("DELETE FROM %s where ID=?", p.Table)
+	sql := fmt.Sprintf("DELETE FROM %s where Id=?", p.Table)
 	stmt, err := p.MySqlConn.Prepare(sql)
 	if err != nil {
 		return false
@@ -79,7 +79,7 @@ func (p *ProductManager) Update(product *datamodels.Product) (err error) {
 	if err := p.Conn(); err != nil {
 		return err
 	}
-	sql := fmt.Sprintf("UPDATE %s SET productName=?,productNum=?,productImage=?,productUrl=? WHERE ID=?", p.Table)
+	sql := fmt.Sprintf("UPDATE %s SET productName=?,productNum=?,productImage=?,productUrl=? WHERE Id=?", p.Table)
 	if stmt, err := p.MySqlConn.Prepare(sql); err != nil {
 		return err
 	} else if _, err := stmt.Exec(product.ProductName, product.ProductNum, product.ProductImage,
@@ -97,7 +97,7 @@ func (p *ProductManager) SelectByKey(productId int64) (productResult *datamodels
 	if err := p.Conn(); err != nil {
 		return nil, err
 	}
-	sql := fmt.Sprintf("SELECT ID,productName,productNum,productImage,productUrl FROM %s WHERE ID=?", p.Table)
+	sql := fmt.Sprintf("SELECT Id,productName,productNum,productImage,productUrl FROM %s WHERE Id=?", p.Table)
 	stmt, err := p.MySqlConn.Prepare(sql)
 	if err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ func (p *ProductManager) SelectAll() (products []*datamodels.Product, err error)
 	if err := p.Conn(); err != nil {
 		return nil, err
 	}
-	sql := fmt.Sprintf("SELECT ID,productName,productNum,productImage,productUrl FROM %s", p.Table)
+	sql := fmt.Sprintf("SELECT Id,productName,productNum,productImage,productUrl FROM %s", p.Table)
 	stmt, err := p.MySqlConn.Prepare(sql)
 	if err != nil {
 		return nil, err

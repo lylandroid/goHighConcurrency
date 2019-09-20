@@ -1,10 +1,12 @@
 package datamodels
 
+import "github.com/jinzhu/gorm"
+
 type Order struct {
-	ID          int64 `sq;:ID`
-	UserId      int64 `sql:userID`
-	ProductId   int64 `sql:productID`
-	OrderStatus int64 `sql:orderStatus`
+	ID          int64 `sql:Id gorm:'column:ID'`
+	UserId      int64 `sql:userID gorm:'column:userId'`
+	ProductId   int64 `sql:productID gorm:'column:productId'`
+	OrderStatus int64 `sql:orderStatus gorm:'column:orderStatus'`
 }
 
 const (
@@ -12,3 +14,7 @@ const (
 	OrderSuccess  //1
 	OrderFailed   //2
 )
+
+func (u *Order) TableName(db *gorm.DB) string {
+	return "order"
+}

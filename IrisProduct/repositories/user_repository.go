@@ -55,7 +55,7 @@ func (r *UserManagerRepository) Insert(user *datamodels.User) (id int64, err err
 	if db.Error != nil {
 		return 0, err
 	}
-	return int64(user.ID), nil
+	return user.ID, nil
 }
 
 func (r *UserManagerRepository) Delete(int64) bool {
@@ -74,7 +74,7 @@ func (r *UserManagerRepository) Select(userName string) (user *datamodels.User, 
 		return nil, err
 	}
 	user = &datamodels.User{}
-	db := r.mySqlConn.Where(&datamodels.User{UserName: userName}).First(user)
+	db := r.mySqlConn.First(user, "user_name=?", userName)
 	//defer db.Close()
 	if db.Error != nil {
 		return user, db.Error

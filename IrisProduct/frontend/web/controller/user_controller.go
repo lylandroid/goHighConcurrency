@@ -60,9 +60,9 @@ func (c *UserController) PostLogin() mvc.Response {
 		}
 	}
 	fmt.Println(user, dbUser)
-	tool.GlobalCookie(c.Ctx, "uid", strconv.FormatInt(int64(dbUser.ID), 10))
-	c.Session.Set("userID", strconv.FormatInt(int64(dbUser.ID), 10))
+	tool.GlobalCookie(c.Ctx, "uid", strconv.FormatInt(dbUser.ID, 10))
+	c.Session.Set("userID", strconv.FormatInt(dbUser.ID, 10))
 	return mvc.Response{
-		Path: "/product/",
+		Path: "/product/detail",
 	}
 }

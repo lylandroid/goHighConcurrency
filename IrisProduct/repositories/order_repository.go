@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"github.com/kataras/iris/core/errors"
 	"strconv"
 )
 
@@ -62,22 +63,31 @@ func (r *OrderManagerRepository) Conn() error {
 }
 
 func (r *OrderManagerRepository) Insert(order *datamodels.Order) (productId int64, err error) {
-	if err = r.Conn(); err != nil {
+	if err = r.ConnGorm(); err != nil {
 		return 0, err
 	}
-	sql := fmt.Sprintf(`INSERT %s set userID=?,productID=?,orderStatus=?`, r.table)
+	/*sql := fmt.Sprintf(`INSERT INTO %s (userID,productID,orderStatus) VALUES (?,?,?);`, r.table)
 	result, err := r.mySqlConn.Exec(sql, order.UserId, order.ProductId, order.OrderStatus)
 	if err != nil {
 		return 0, err
 	}
-	return result.LastInsertId()
+	return result.LastInsertId()*/
+	if !r.gromDb.NewRecord(order) {
+		return 0, errors.New("主键不为空！")
+	}
+	db := r.gromDb.Create(order)
+	if db.Error != nil {
+		return 0, db.Error
+	}
+	return order.ProductId, nil
+
 }
 
 func (r *OrderManagerRepository) Delete(orderId int64) (isOK bool) {
 	if err := r.Conn(); err != nil {
 		return false
 	}
-	sql := fmt.Sprintf(`DELETE FROM %s where ID=?`, r.table)
+	sql := fmt.Sprintf(`DELETE FROM %s where Id=?`, r.table)
 	_, err := r.mySqlConn.Exec(sql, strconv.FormatInt(orderId, 10))
 	return err == nil
 }
@@ -86,7 +96,7 @@ func (r *OrderManagerRepository) Update(order *datamodels.Order) (err error) {
 	if err := r.Conn(); err != nil {
 		return err
 	}
-	sql := fmt.Sprintf(`UPDATE %s set userID=?,productID=?,orderStatus=? where ID=?`, r.table)
+	sql := fmt.Sprintf(`UPDATE %s set userID=?,productID=?,orderStatus=? where Id=?`, r.table)
 	stmt, err := r.mySqlConn.Prepare(sql)
 	if err != nil {
 		return err
@@ -102,7 +112,7 @@ func (r *OrderManagerRepository) SelectByKey(id int64) (order *datamodels.Order,
 	if err := r.Conn(); err != nil {
 		return nil, err
 	}
-	sql := fmt.Sprintf(`select * from %s where ID=?`, r.table)
+	sql := fmt.Sprintf(`select * from %s where Id=?`, r.table)
 	rows, err := r.mySqlConn.Query(sql, strconv.FormatInt(id, 10))
 	if err != nil {
 		return nil, err
@@ -148,24 +158,25 @@ func (r *OrderManagerRepository) SelectAllWithInfo() (orderMap map[int]map[strin
 	if err := r.Conn(); err != nil {
 		return nil, err
 	}
-	sql := `SELECT o.ID,p.productName,o.orderStatus FROM imooc.order as o left join product as p on o.productID=p.ID`
+	sql := `SELECT o.Id,p.productName,o.orderStatus FROM imooc.order as o left join product as p on o.productID=p.Id`
 	rows, err := r.mySqlConn.Query(sql)
 	if err != nil {
 		return nil, err
 	}
 	return common.GetResultRows(rows), nil
 }
+
 /*func (r *OrderManagerRepository) SelectAllWithInfo() (orderMap map[int]map[string]string, err error) {
 	if err := r.ConnGorm(); err != nil {
 		return nil, err
 	}
-	//sql := `SELECT o.ID,p.productName,o.orderStatus FROM imooc.order as o left join product as p on o.productID=p.ID`
+	//sql := `SELECT o.Id,p.productName,o.orderStatus FROM imooc.order as o left join product as p on o.productID=p.Id`
 	//rows, err := r.mySqlConn.Query(sql)
 	orderMap = map[int]map[string]string{}
 	orders := []datamodels.Order{}
 	/*find := r.gromDb.Table("order").
-		Select("order.ID,product.productName,order.orderStatus").
-		Joins("left join product on order.productID = product.ID").Find(&orders)
+		Select("order.Id,product.productName,order.orderStatus").
+		Joins("left join product on order.productID = product.Id").Find(&orders)
 		r.gromDb.Find(&orders)
 	find := r.gromDb.Table("order").Find(&orders)
 	fmt.Println("orders: ", orders, find.Error)

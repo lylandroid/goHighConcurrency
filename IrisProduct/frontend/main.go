@@ -9,6 +9,7 @@ import (
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
 	"time"
+	"./middlerware"
 )
 
 const rootWebPath = "./IrisProduct/frontend/web/"
@@ -47,10 +48,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	orderService := services.NewOrderService("order", db)
+
 	productService := services.NewProductServiceImp(db)
 	productParty := app.Party("/product")
 	product := mvc.New(productParty)
-	product.Register(productService, ctx, session.Start)
+	productParty.Use(middlerware.AuthProduct)
+	product.Register(ctx, orderService, productService, session.Start)
 	product.Handle(new(controller.ProductController))
 
 	//启动服务
