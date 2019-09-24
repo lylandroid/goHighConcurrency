@@ -62,7 +62,7 @@ func (r *OrderManagerRepository) Conn() error {
 	return nil
 }
 
-func (r *OrderManagerRepository) Insert(order *datamodels.Order) (productId int64, err error) {
+func (r *OrderManagerRepository) Insert(order *datamodels.Order) (orderId int64, err error) {
 	if err = r.ConnGorm(); err != nil {
 		return 0, err
 	}
@@ -79,7 +79,8 @@ func (r *OrderManagerRepository) Insert(order *datamodels.Order) (productId int6
 	if db.Error != nil {
 		return 0, db.Error
 	}
-	return order.ProductId, nil
+	fmt.Println("insert: ", order, db.Value, db.RowsAffected)
+	return order.ID, nil
 
 }
 
