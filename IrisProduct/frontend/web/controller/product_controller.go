@@ -22,7 +22,7 @@ type ProductController struct {
 
 func (p *ProductController) GetGenerateHtml() {
 	//1.获取模板
-	template, err := template.ParseFiles(filepath.Join(templatePath), "product.html")
+	template, err := template.ParseFiles(filepath.Join(templatePath,"product.html"))
 	if err != nil {
 		p.Ctx.Application().Logger().Debug(err)
 	}
@@ -42,8 +42,8 @@ func (p *ProductController) GetGenerateHtml() {
 }
 
 var (
-	htmlOutPath  = "./IrisProduct/frontend/web/htmlProductOut/"
-	templatePath = "./IrisProduct/frontend/web/template/"
+	htmlOutPath  = "./IrisProduct/frontend/web/generate/htmlProductOut/" //生成Html保存目录
+	templatePath = "./IrisProduct/frontend/web/views/template/"          //静态文件模板目录
 )
 
 func generateStaticHtml(ctx iris.Context, template *template.Template,
@@ -56,15 +56,15 @@ func generateStaticHtml(ctx iris.Context, template *template.Template,
 		}
 	}
 	//2,生成静态文件
-	file, err := os.OpenFile(fileName, os.O_CREATE, os.ModePerm)
+	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
 		ctx.Application().Logger().Debug(err)
 	}
 	defer file.Close()
 	template.Execute(file, &product)
-
 }
 
+//判断文件是否存在
 func exist(fileName string) bool {
 	_, err := os.Stat(fileName)
 	return err == nil || os.IsExist(err)

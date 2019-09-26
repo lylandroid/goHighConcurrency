@@ -23,7 +23,7 @@ func main() {
 	//设置模板目录
 	app.StaticWeb("/public", rootWebPath+"public")
 	//访问生成html静态文件
-	app.StaticWeb("/html", rootWebPath+"htmlProductOut")
+	app.StaticWeb("/html", rootWebPath+"generate/htmlProductOut")
 	//出现异常跳转到指定页面
 	app.OnAnyErrorCode(func(ctx iris.Context) {
 		ctx.ViewData("message",
