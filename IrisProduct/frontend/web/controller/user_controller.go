@@ -9,6 +9,7 @@ import (
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
 	"strconv"
+	"../../../encrypt"
 )
 
 type UserController struct {
@@ -60,8 +61,16 @@ func (c *UserController) PostLogin() mvc.Response {
 		}
 	}
 	fmt.Println(user, dbUser)
-	tool.GlobalCookie(c.Ctx, "uid", strconv.FormatInt(dbUser.ID, 10))
-	c.Session.Set("userID", strconv.FormatInt(dbUser.ID, 10))
+	uid := strconv.FormatInt(dbUser.ID, 10)
+	tool.GlobalCookie(c.Ctx, "uid", uid)
+
+	enuid, err := encrypt.EnPwdCode(uid)
+	if err != nil {
+		c.Ctx.Application().Logger().Debug(err)
+	}
+	//2.写入用户ID到cookie中
+	tool.GlobalCookie(c.Ctx, "sign", enuid)
+	//c.Session.Set("userID", strconv.FormatInt(dbUser.ID, 10))
 	return mvc.Response{
 		Path: "/product/detail",
 	}

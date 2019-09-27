@@ -1,15 +1,13 @@
 package main
 
 import (
-	"../services"
 	"../common"
+	"../services"
+	"./middlerware"
 	"./web/controller"
 	"context"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
-	"github.com/kataras/iris/sessions"
-	"time"
-	"./middlerware"
 )
 
 const rootWebPath = "./IrisProduct/frontend/web/"
@@ -34,16 +32,16 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	session := sessions.New(sessions.Config{
+	/*session := sessions.New(sessions.Config{
 		Cookie:  "helloword",
 		Expires: 60 * time.Minute,
-	})
+	})*/
 
 	//注册控制权
 	userService := services.NewUserService("user")
 	userParty := app.Party("/user")
 	user := mvc.New(userParty)
-	user.Register(userService, ctx, session.Start)
+	user.Register(userService, ctx/*, session.Start*/)
 	user.Handle(new(controller.UserController))
 
 	db, err := common.NewMysqlConn()
@@ -56,7 +54,7 @@ func main() {
 	productParty := app.Party("/product")
 	product := mvc.New(productParty)
 	productParty.Use(middlerware.AuthProduct)
-	product.Register(ctx, orderService, productService, session.Start)
+	product.Register(ctx, orderService, productService/*, session.Start*/)
 	product.Handle(new(controller.ProductController))
 
 	//启动服务
